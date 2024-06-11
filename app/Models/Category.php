@@ -3,18 +3,18 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Category;
+use Illuminate\Support\Str;
+use App\Models\project;
 
 
-class project extends Model
+class Category extends Model
 {
     use HasFactory;
-    protected $fillable = ['title','img','content', 'slug'];
-    public static function generateSlug($title){
-        $slugBase = Str::slug(trim($title), '-');
-        $slugs = \App\Models\project::orderBy('slug')->pluck('slug')->toArray();
+    protected $fillable = ['name','slug'];
+    public static function generateSlug($name){
+        $slugBase = Str::slug(trim($name), '-');
+        $slugs = \App\Models\Category::orderBy('slug')->pluck('slug')->toArray();
         $num = 1;
         $slugNumbers = [];
         
@@ -37,9 +37,7 @@ class project extends Model
         }
         return $slug;
     }
-    public function category(){
-        return $this->belongsTo(Category::class);
+    public function projects(){
+        return $this->hasMany(project::class);
     }
 }
-
-
