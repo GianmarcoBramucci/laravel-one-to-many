@@ -11,7 +11,7 @@ use App\Models\Category;
 class project extends Model
 {
     use HasFactory;
-    protected $fillable = ['title','img','content', 'slug'];
+    protected $fillable = ['title','img','content', 'slug' , 'category_id'];
     public static function generateSlug($title){
         $slugBase = Str::slug(trim($title), '-');
         $slugs = \App\Models\project::orderBy('slug')->pluck('slug')->toArray();

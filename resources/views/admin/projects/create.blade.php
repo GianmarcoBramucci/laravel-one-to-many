@@ -1,6 +1,15 @@
 @extends('layouts.app')
 @section('content')
     <section class="container">
+      @if ($errors->any())
+      <div class="alert alert-danger">
+          <ul>
+              @foreach ($errors->all() as $error)
+                  <li>{{ $error }}</li>
+              @endforeach
+          </ul>
+      </div>
+  @endif
       <form action="{{ route('admin.projects.store') }}" method="POST" enctype="multipart/form-data">
         @csrf     
           <div class="mb-3">
@@ -14,6 +23,17 @@
               <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label">content</label>
                 <textarea class="form-control" name="content" id="exampleFormControlTextarea1" rows="3"></textarea>
+              </div>
+              <div class="mb-3">
+                <label for="category_id">Categoria</label>
+                <select name="category_id" id="category_id" class="form-control">
+                    <option value="">Seleziona una categoria</option>
+                    @foreach($categories as $category)
+                        <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
               </div>
               <button type="submit" class="btn btn-primary">invia</button>    
             </form>

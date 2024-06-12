@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\project;
+use App\Models\Category;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Requests\StoreprojectRequest;
+use App\Http\Requests\UpdateprojectRequest;
 
 
 class ProjectController extends Controller
@@ -16,8 +19,13 @@ class ProjectController extends Controller
     public function index()
     {
         $projects = Project::all()->sortBy(function($project) {
-            return explode('-', $project->slug)[1]; 
+            $parts = explode('-', $project->slug);
+            $numbers = array_filter($parts, function($part) {
+                return is_numeric($part);
+            });
+            return end($numbers);
         });
+        
         return view('admin.projects.index',compact('projects'));
     }
 
@@ -26,17 +34,19 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('admin.projects.create');
+        $categories= Category::all();
+        return view('admin.projects.create',compact('categories'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreprojectRequest $request)
     {
-        $formData= $request->all();
+
+        $formData= $request->validated();
         $formData['slug']= project::generateSlug($formData['title']);
-        if($request->img){
+        if($request->hasFile('image')){
             $imgPath= Storage::put('ProjectsImg',$request->img);
             $formData['img']= $imgPath;    
             }
@@ -57,19 +67,20 @@ class ProjectController extends Controller
      */
     public function edit(project $project)
     {
-        return view('admin.projects.edit',compact('project'));
+        $categories= Category::all();
+        return view('admin.projects.edit',compact('project'),compact('categories'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, project $project)
+    public function update(UpdateprojectRequest $request, project $project)
     {
-        $formData= $request->all();
+        $formData= $request->validated();
         if($project->title !== $formData['title']){
             $formData['slug']= project::generateSlug($formData['title']);
         }
-        if($request->img){
+        if($request->hasFile('image')){
             $imgPath= Storage::put('ProjectsImg',$request->img);
             $formData['img']= $imgPath;    
             }

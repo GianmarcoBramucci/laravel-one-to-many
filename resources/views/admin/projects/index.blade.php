@@ -10,6 +10,9 @@
             <li>
                 <h2>{{$project->title}}</h2>
                 <h3>{{$project->slug}}</h3>
+                @if($project->category)
+                    <h4>category:{{ $project->category->name }}</h4>
+                @endif
                 <p>{{$project->content}}</p>
                 <img src="{{asset('storage/'. $project->img)}}" alt="">
                 <a href="{{ route('admin.projects.show',$project->slug) }}"><i class="fa-solid fa-eye"></i></a>
@@ -20,7 +23,6 @@
                     <button type="submit" class="delete-button border-0 bg-transparent"  data-item-title="{{ $project->title }}">
                       <i class="fa-solid fa-trash" style="color: #0A58CA;"></i>
                     </button>
-
                   </form>
             </li>
             @endforeach
